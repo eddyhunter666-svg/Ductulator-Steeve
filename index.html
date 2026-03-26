@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Ductulator Chantier</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial; background:#111; color:#fff; text-align:center; }
+input { font-size:20px; padding:10px; width:120px; margin:5px; }
+.result { margin-top:20px; font-size:18px; }
+.big { font-size:28px; font-weight:bold; }
+</style>
+</head>
+
+<body>
+
+<h2>Ductulator</h2>
+
+CFM<br>
+<input id="cfm" type="number" value="800"><br>
+
+Friction (optionnel)<br>
+<input id="fr" type="number" step="0.01" placeholder="0.05"><br>
+
+<button onclick="calc()">CALCULER</button>
+
+<div class="result" id="output"></div>
+
+<script>
+
+function calc() {
+
+let cfm = parseFloat(document.getElementById("cfm").value);
+let fr = parseFloat(document.getElementById("fr").value);
+
+if (!fr) fr = 0.05;
+
+// velocity approx basée friction
+let velocity = 4005 * Math.sqrt(fr);
+
+// aire
+let area = cfm / velocity;
+
+// diamètre (ft → pouces)
+let diameter = Math.sqrt((4 * area) / Math.PI) * 12;
+
+// arrondi standard
+let standard = Math.round(diameter);
+
+// recalcul velocity réelle
+let area2 = Math.PI * Math.pow((standard/12)/2,2);
+let velocity_real = cfm / area2;
+
+// rect équivalent simple
+let rect1_w = Math.round(standard * 0.75);
+let rect1_h = Math.round(standard * 1.25);
+
+document.getElementById("output").innerHTML =
+`
+<div class="big">${standard}" rond</div>
+Velocity: ${Math.round(velocity_real)} FPM<br><br>
+
+Rect suggéré:<br>
+${rect1_w}" x ${rect1_h}"<br><br>
+
+Friction utilisée: ${fr}
+`;
+
+}
+
+</script>
+
+</body>
+</html>
